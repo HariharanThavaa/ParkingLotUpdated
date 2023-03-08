@@ -1,8 +1,8 @@
 # parking_lot
 
-venue has list of spots
+venue has a list of spots
 
-venue sport has a fee model
+venue + spot has a fee models
 
 ## Venue
 ```
@@ -25,5 +25,3 @@ Up to few hours
 Up to few hours cumulative
 Per day
 ```
-
-
