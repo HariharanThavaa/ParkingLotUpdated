@@ -45,20 +45,24 @@ public abstract class Venue {
         return new ParkingTicket(allocatedSpot.getSpotNumber(), entryTimestamp);
     }
 
-    public synchronized ParkingReceipt unPark(SpotType spotType, ParkingTicket ticket,
+    public synchronized ParkingReceipt unpark(SpotType spotType, ParkingTicket ticket,
                                               LocalDateTime exitTimestamp) {
 
-        Spot freeSpot = SPOTS.get(spotType).get(OCCUPIED).remove(ticket.getSpotNumber()-1);
+        Spot spot = new Spot(spotType, ticket.getSpotNumber());
 
-        SPOTS.get(spotType).get(AVAILABLE).add(freeSpot);
+        SPOTS.get(spotType).get(OCCUPIED).remove(spot);
 
-        long fees = calculateFee(spotType,
-                ChronoUnit.DAYS.between(ticket.getEntryTimestamp(), exitTimestamp),
-                ChronoUnit.HOURS.between(ticket.getEntryTimestamp(), exitTimestamp) % 24,
-                ChronoUnit.MINUTES.between(ticket.getEntryTimestamp(), exitTimestamp) % 60);
+        SPOTS.get(spotType).get(AVAILABLE).add(spot);
 
-        return new ParkingReceipt(ticket.getEntryTimestamp(), exitTimestamp, fees);
+        return new ParkingReceipt(ticket.getEntryTimestamp(), exitTimestamp,
+                calculateFee(spotType, ticket.getEntryTimestamp(), exitTimestamp));
+    }
 
+    private long calculateFee(SpotType spotType, LocalDateTime entryTimestamp, LocalDateTime exitTimestamp){
+        return calculateFee(spotType,
+                ChronoUnit.DAYS.between(entryTimestamp, exitTimestamp),
+                ChronoUnit.HOURS.between(entryTimestamp, exitTimestamp) % 24,
+                ChronoUnit.MINUTES.between(entryTimestamp, exitTimestamp) % 60);
     }
 
     protected abstract long calculateFee(SpotType spotType, long days, long hours, long mins);
@@ -97,11 +101,5 @@ public abstract class Venue {
     protected enum SpotAvailability {
         AVAILABLE,
         OCCUPIED
-    }
-
-    protected long getHoursToCalculate(long days, long hours, long mins){
-        hours = mins > 0 ? hours + 1 : hours;
-        hours = days > 0 ? hours + days * 24 : hours;
-        return hours;
     }
 }

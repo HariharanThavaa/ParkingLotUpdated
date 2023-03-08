@@ -14,8 +14,6 @@ import static com.sahaj.parkinglot.model.VenueType.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-
-
 class VenueTest {
 
     @Test
@@ -31,41 +29,41 @@ class VenueTest {
     void testExample1() throws NoSpaceAvailableException {
         Venue venue = Venue.initialiseVenue(MALL, Map.of(MOTORCYCLE_OR_SCOOTER, 2));
         // Park motorcycle
-        ParkingTicket ticket1 = venue.park(MOTORCYCLE_OR_SCOOTER, LocalDateTime.of( 2022, 5, 29, 14, 4, 7));
+        ParkingTicket ticket1 = venue.park(MOTORCYCLE_OR_SCOOTER, LocalDateTime.of(2022, 5, 29, 14, 4, 7));
         assertThat(ticket1.getTicketNumber()).isEqualTo("001");
         assertThat(ticket1.getSpotNumber()).isEqualTo(1);
-        assertThat(ticket1.getEntryTimestamp()).isEqualTo(LocalDateTime.of( 2022, 5, 29, 14, 4, 7));
+        assertThat(ticket1.getEntryTimestamp()).isEqualTo(LocalDateTime.of(2022, 5, 29, 14, 4, 7));
 
         // Park Scooter
-        ParkingTicket ticket2 = venue.park(MOTORCYCLE_OR_SCOOTER, LocalDateTime.of( 2022, 5, 29, 14, 44, 7));
+        ParkingTicket ticket2 = venue.park(MOTORCYCLE_OR_SCOOTER, LocalDateTime.of(2022, 5, 29, 14, 44, 7));
         assertThat(ticket2.getTicketNumber()).isEqualTo("002");
         assertThat(ticket2.getSpotNumber()).isEqualTo(2);
-        assertThat(ticket2.getEntryTimestamp()).isEqualTo(LocalDateTime.of( 2022, 5, 29, 14, 44, 7));
+        assertThat(ticket2.getEntryTimestamp()).isEqualTo(LocalDateTime.of(2022, 5, 29, 14, 44, 7));
 
         // Park Scooter
         assertThatExceptionOfType(NoSpaceAvailableException.class)
                 .isThrownBy(() -> venue.park(MOTORCYCLE_OR_SCOOTER, LocalDateTime.now()))
                 .withMessage("No space available");
 
-        // Un park scooter, ticket number 002
-        ParkingReceipt receipt1 = venue.unPark(MOTORCYCLE_OR_SCOOTER, ticket2,
+        // Unpark scooter, ticket number 002
+        ParkingReceipt receipt1 = venue.unpark(MOTORCYCLE_OR_SCOOTER, ticket2,
                 LocalDateTime.of(2022, 5, 29, 15, 40, 7));
         assertThat(receipt1.getReceiptNumber()).isEqualTo("R-001");
-        assertThat(receipt1.getEntryTimestamp()).isEqualTo(LocalDateTime.of( 2022, 5, 29, 14, 44, 7));
+        assertThat(receipt1.getEntryTimestamp()).isEqualTo(LocalDateTime.of(2022, 5, 29, 14, 44, 7));
         assertThat(receipt1.getExitTimestamp()).isEqualTo(LocalDateTime.of(2022, 5, 29, 15, 40, 7));
         assertThat(receipt1.getFees()).isEqualTo(10);
 
         // Park motorcycle
-        ParkingTicket ticket3 = venue.park(MOTORCYCLE_OR_SCOOTER, LocalDateTime.of( 2022, 5, 29, 15, 59, 7));
+        ParkingTicket ticket3 = venue.park(MOTORCYCLE_OR_SCOOTER, LocalDateTime.of(2022, 5, 29, 15, 59, 7));
         assertThat(ticket3.getTicketNumber()).isEqualTo("003");
         assertThat(ticket3.getSpotNumber()).isEqualTo(2);
-        assertThat(ticket3.getEntryTimestamp()).isEqualTo(LocalDateTime.of( 2022, 5, 29, 15, 59, 7));
+        assertThat(ticket3.getEntryTimestamp()).isEqualTo(LocalDateTime.of(2022, 5, 29, 15, 59, 7));
 
         // Un park motorcycle, ticket number 001
-        ParkingReceipt receipt2 = venue.unPark(MOTORCYCLE_OR_SCOOTER, ticket1,
+        ParkingReceipt receipt2 = venue.unpark(MOTORCYCLE_OR_SCOOTER, ticket1,
                 LocalDateTime.of(2022, 5, 29, 17, 44, 7));
         assertThat(receipt2.getReceiptNumber()).isEqualTo("R-002");
-        assertThat(receipt2.getEntryTimestamp()).isEqualTo(LocalDateTime.of( 2022, 5, 29, 14, 4, 7));
+        assertThat(receipt2.getEntryTimestamp()).isEqualTo(LocalDateTime.of(2022, 5, 29, 14, 4, 7));
         assertThat(receipt2.getExitTimestamp()).isEqualTo(LocalDateTime.of(2022, 5, 29, 17, 44, 7));
         assertThat(receipt2.getFees()).isEqualTo(40);
     }
@@ -113,6 +111,8 @@ class VenueTest {
 
         // Motorcycle parked for 55 mins. Fees: 0
         assertThat(venue.calculateFee(MOTORCYCLE_OR_SCOOTER, 0, 0, 55)).isEqualTo(0);
+
+        assertThat(venue.calculateFee(MOTORCYCLE_OR_SCOOTER, 0, 7, 55)).isEqualTo(40);
 
         // Motorcycle parked for 14 hours and 59 mins. Fees: 60
         assertThat(venue.calculateFee(MOTORCYCLE_OR_SCOOTER, 0, 14, 59)).isEqualTo(60);
