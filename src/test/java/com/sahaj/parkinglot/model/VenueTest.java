@@ -128,7 +128,6 @@ class VenueTest {
 
         // Car parked for 3 days and 1 hour. Fees: 400
         assertThat(venue.calculateFee(CAR_OR_SUV, 3, 1, 0)).isEqualTo(400);
-
     }
 
 }

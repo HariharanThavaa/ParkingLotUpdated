@@ -42,7 +42,7 @@ public abstract class Venue {
 
         SPOTS.get(spotType).get(OCCUPIED).add(allocatedSpot);
 
-        return new ParkingTicket(allocatedSpot.getSpotNumber() + 1, entryTimestamp);
+        return new ParkingTicket(allocatedSpot.getSpotNumber(), entryTimestamp);
     }
 
     public synchronized ParkingReceipt unPark(SpotType spotType, ParkingTicket ticket,
@@ -83,7 +83,7 @@ public abstract class Venue {
             throw new SpotTypeNotSupportedException(format("Spot Type [%s] is not supported by venue type [%s]", spotType, getType()));
         }
 
-        List<Spot> availableSpots = IntStream.range(0, noOfSpots)
+        List<Spot> availableSpots = IntStream.range(1, noOfSpots + 1)
                 .boxed()
                 .map(spotNumber -> new Spot(spotType, spotNumber))
                 .collect(toList());
